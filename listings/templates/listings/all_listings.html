@@ -1,0 +1,27 @@
+{% extends 'listings/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4 text-center">All Property Listings</h2>
+
+  <div class="row">
+    {% for property in properties %}
+      <div class="col-md-3 mb-4">
+        <div class="card h-100">
+          {% if property.image %}
+            <img src="{{ property.image.url }}" class="card-img-top" alt="{{ property.title }}">
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">{{ property.title }}</h5>
+            <p class="card-text">{{ property.location }}</p>
+            <p class="card-text"><strong>₹{{ property.price }}</strong></p>
+            <a href="{% url 'property_detail' property.pk %}" class="btn btn-primary btn-sm">View Details</a>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p>No properties available.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

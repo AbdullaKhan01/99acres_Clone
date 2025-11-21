@@ -1,0 +1,240 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{% block title %}Homeverse — Real Estate{% endblock %}</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous"/>
+
+  <!-- Global CSS -->
+  <link rel="stylesheet" href="{% static 'listings/css/styles.css' %}">
+
+  <!-- 👇 Page-specific CSS -->
+  {% block extra_head %}{% endblock %}
+
+  <!-- 👇 Chatbot CSS -->
+  <style>
+    /* Floating Chat Button */
+    #chatbot-toggle {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 24px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      cursor: pointer;
+      z-index: 999;
+      transition: 0.3s;
+    }
+    #chatbot-toggle:hover {
+      background-color: #0056b3;
+    }
+
+    /* Chat Window */
+    #chatbot-box {
+      position: fixed;
+      bottom: 95px;
+      right: 25px;
+      width: 350px;
+      max-height: 450px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 1000;
+    }
+
+    #chatbot-header {
+      background: #007bff;
+      color: white;
+      padding: 12px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    #chatbot-messages {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      font-size: 14px;
+    }
+
+    #chatbot-messages p {
+      margin: 8px 0;
+      padding: 8px 10px;
+      border-radius: 8px;
+      max-width: 80%;
+    }
+
+    .user-msg {
+      background: #007bff;
+      color: white;
+      margin-left: auto;
+    }
+
+    .bot-msg {
+      background: #f1f1f1;
+      color: #333;
+      margin-right: auto;
+    }
+
+    #chatbot-input-box {
+      display: flex;
+      border-top: 1px solid #ddd;
+    }
+
+    #chatbot-input {
+      flex: 1;
+      border: none;
+      padding: 10px;
+      font-size: 14px;
+    }
+
+    #chatbot-send {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ===== Header / Navbar ===== -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="/">Homeverse</a>
+
+      <nav class="nav">
+        <a href="/">Home</a>
+        <a href="{% url 'all_listings' %}">Listings</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+        <a href="{% url 'add_property' %}" class="btn">+ Add Property</a>
+
+        {% if user.is_authenticated %}
+          <a href="{% url 'my_listings' %}">My Listings</a>
+          <a href="/admin/">Dashboard</a>
+          <a href="{% url 'logout' %}" class="btn btn-danger" style="margin-left: 10px;">Logout</a>
+        {% else %}
+          <a href="{% url 'login' %}">Login</a>
+          <a href="{% url 'register' %}" class="btn btn-secondary" style="margin-left: 10px;">Register</a>
+        {% endif %}
+      </nav>
+
+      <button id="nav-toggle" class="nav-toggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===== Main Content ===== -->
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <h3>Homeverse</h3>
+        <p>Modern property listings — designed for quick demos and real projects.</p>
+      </div>
+      <div>
+        <h4>Links</h4>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="#listings">Listings</a></li>
+          <li><a href="#about">About</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <p>sheryabdullah25072003@gmail.com</p>
+        <p>+91 7009433627</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© {{ now.year }} Homeverse — Built with Django</p>
+    </div>
+  </footer>
+
+  <!-- 👇 Floating Chatbot -->
+  <button id="chatbot-toggle"><i class="fa-solid fa-comments"></i></button>
+  <div id="chatbot-box">
+    <div id="chatbot-header">💬 Homeverse AI Assistant</div>
+    <div id="chatbot-messages"></div>
+    <div id="chatbot-input-box">
+      <input type="text" id="chatbot-input" placeholder="Ask me anything..." />
+      <button id="chatbot-send"><i class="fa-solid fa-paper-plane"></i></button>
+    </div>
+  </div>
+
+  <!-- ===== JS Scripts ===== -->
+  <script src="{% static 'listings/js/main.js' %}"></script>
+
+  <!-- 👇 Chatbot JS -->
+  <script>
+    const toggleBtn = document.getElementById("chatbot-toggle");
+    const chatBox = document.getElementById("chatbot-box");
+    const sendBtn = document.getElementById("chatbot-send");
+    const input = document.getElementById("chatbot-input");
+    const messages = document.getElementById("chatbot-messages");
+
+    toggleBtn.addEventListener("click", () => {
+      chatBox.style.display = chatBox.style.display === "flex" ? "none" : "flex";
+    });
+
+    sendBtn.addEventListener("click", sendMessage);
+    input.addEventListener("keypress", e => { if (e.key === "Enter") sendMessage(); });
+
+    function appendMessage(text, type) {
+      const msg = document.createElement("p");
+      msg.classList.add(type === "user" ? "user-msg" : "bot-msg");
+      msg.textContent = text;
+      messages.appendChild(msg);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    async function sendMessage() {
+      const userText = input.value.trim();
+      if (!userText) return;
+
+      appendMessage(userText, "user");
+      input.value = "";
+
+      try {
+        const response = await fetch("/chatbot/chat/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}"
+          },
+          body: JSON.stringify({ message: userText })
+        });
+        const data = await response.json();
+        appendMessage(data.reply || "Sorry, I couldn’t understand that.", "bot");
+      } catch {
+        appendMessage("⚠️ Server error, please try again.", "bot");
+      }
+    }
+  </script>
+
+  <!-- 👇 Page-specific JS -->
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

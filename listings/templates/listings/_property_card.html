@@ -1,0 +1,22 @@
+<article class="card">
+  <a class="card-link" href="{% url 'property_detail' property.id %}">
+    <div class="card-media">
+      {% if property.image %}
+        <img src="{{ property.image.url }}" alt="{{ property.title }}">
+      {% else %}
+        <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder" alt="placeholder">
+      {% endif %}
+    </div>
+
+    <div class="card-body">
+      <h3 class="card-title">{{ property.title|truncatechars:45 }}</h3>
+      <p class="muted">{{ property.location }}</p>
+      <p class="price">₹{{ property.price|floatformat:0 }}</p>
+      <div class="card-meta">
+        <span>{{ property.bedrooms }} bd</span>
+        <span>{{ property.bathrooms }} ba</span>
+        <span>{{ property.area }} sqft</span>
+      </div>
+    </div>
+  </a>
+</article>

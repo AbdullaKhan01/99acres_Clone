@@ -1,0 +1,90 @@
+{% extends 'listings/base.html' %}
+{% block title %}Home — Homeverse{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="container hero-inner">
+    <div class="hero-left">
+      <h1>Find your dream property</h1>
+      <p class="lead">
+        Search apartments, villas, and commercial spaces. Fast. Clean. Minimal UI — perfect for your semester demo.
+      </p>
+
+      <!-- 🔍 Updated Search Form -->
+      <form action="{% url 'search' %}" method="get" class="search-form">
+  <input 
+    type="text" 
+    name="q" 
+    placeholder="Enter city or location"
+    value="{{ request.GET.q|default_if_none:'' }}"
+  >
+
+  <select name="type">
+    <option value="ALL" {% if request.GET.type == "ALL" or not request.GET.type %}selected{% endif %}>All Property Types</option>
+    <option value="AP" {% if request.GET.type == "AP" %}selected{% endif %}>Apartment</option>
+    <option value="VI" {% if request.GET.type == "VI" %}selected{% endif %}>Villa</option>
+    <option value="FL" {% if request.GET.type == "FL" %}selected{% endif %}>Flat</option>
+    <option value="PL" {% if request.GET.type == "PL" %}selected{% endif %}>Plot</option>
+    <option value="CO" {% if request.GET.type == "CO" %}selected{% endif %}>Commercial</option>
+  </select>
+
+  <button type="submit">Search</button>
+</form>
+  
+      <!-- ✅ End Search Form -->
+    </div>
+
+    <div class="hero-right">
+      <div class="hero-card">
+        <img
+        
+          src="https://media.istockphoto.com/id/2175973016/photo/modern-luxury-home-exterior-at-sunset.jpg?s=612x612&w=0&k=20&c=6D40lfnRxmyM3kW3BOIK45fEA7K2p9uvOOcCTufwJvw="
+          alt="Hero image"
+          class="w-100"
+        />
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="listings" class="listings-section container">
+  <h2 class="section-title">Latest Listings</h2>
+  <div class="cards-grid">
+    {% for p in properties %}
+      {% include 'listings/_property_card.html' with property=p %}
+    {% empty %}
+      <p>No properties yet. Add some via admin.</p>
+    {% endfor %}
+  </div>
+</section>
+
+<section id="about" class="info-section">
+  <div class="container info-grid">
+    <div class="info-card">
+      <h3>Why choose us</h3>
+      <p>Fast search, responsive UI, and a clean codebase — ideal for demos.</p>
+    </div>
+    <div class="info-card">
+      <h3>Secure</h3>
+      <p>Built on Django with built-in auth and admin.</p>
+    </div>
+    <div class="info-card">
+      <h3>Easy to customize</h3>
+      <p>Change colors, fonts, and layout in one stylesheet.</p>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="contact-section container">
+  <div class="contact-card">
+    <h3>Contact for demo</h3>
+    <form method="post" action="#">
+      {% csrf_token %}
+      <input type="text" name="name" placeholder="Your name" />
+      <input type="email" name="email" placeholder="Your email" />
+      <textarea name="message" placeholder="Message"></textarea>
+      <button type="submit">Send</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

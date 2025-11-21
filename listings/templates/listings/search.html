@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Search Results</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+  <section class="property" id="property">
+    <div class="container">
+      <h2 class="h2 section-title">Search Results</h2>
+
+      <ul class="property-list has-scrollbar">
+        {% for property in properties %}
+        <li>
+          <div class="property-card">
+            <figure class="card-banner">
+              {% if property.image %}
+              <img src="{{ property.image.url }}" alt="{{ property.title }}" class="w-100">
+              {% else %}
+              <img src="https://via.placeholder.com/400x250?text=No+Image" alt="No image" class="w-100">
+              {% endif %}
+            </figure>
+            <div class="card-content">
+              <h3 class="h3 card-title">{{ property.title }}</h3>
+              <p class="card-text">{{ property.location }}</p>
+              <div class="card-price">₹{{ property.price }}</div>
+            </div>
+          </div>
+        </li>
+        {% empty %}
+        <p>No properties match your search.</p>
+        {% endfor %}
+      </ul>
+    </div>
+  </section>
+
+</body>
+</html>

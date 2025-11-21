@@ -1,0 +1,47 @@
+{% extends 'listings/base.html' %}
+{% block title %}Add Property{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 700px; margin-top: 50px;">
+  <h2 class="section-title">List Your Property</h2>
+
+  <form method="post" enctype="multipart/form-data" class="form">
+    {% csrf_token %}
+
+    <label>Title</label>
+    <input type="text" name="title" required>
+
+    <label>Description</label>
+    <textarea name="description" required></textarea>
+
+    <label>Property Type</label>
+    <select name="property_type" required>
+      <option value="AP">Apartment</option>
+      <option value="VI">Villa</option>
+      <option value="FL">Flat</option>
+      <option value="PL">Plot</option>
+      <option value="CO">Commercial</option>
+    </select>
+
+    <label>Price (₹)</label>
+    <input type="number" name="price" required>
+
+    <label>Location</label>
+    <input type="text" name="location" required>
+
+    <label>Bedrooms</label>
+    <input type="number" name="bedrooms" min="1" required>
+
+    <label>Bathrooms</label>
+    <input type="number" name="bathrooms" min="1" required>
+
+    <label>Area (sq ft)</label>
+    <input type="number" name="area" required>
+
+    <label>Property Image</label>
+    <input type="file" name="image" accept="image/*">
+
+    <button type="submit" class="btn btn-primary" style="margin-top: 20px;">Submit Property</button>
+  </form>
+</div>
+{% endblock %}
